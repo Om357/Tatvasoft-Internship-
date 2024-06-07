@@ -1,89 +1,74 @@
-﻿using Business_logic_Layer;
-using Data_Access_Layer.Repository.Entities;
+﻿using DataAccessLayer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using DataAccessLayer.Repository.Entities;
 
-namespace Web_API.Controllers
+namespace Books.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
-    public class LoginController : ControllerBase
-    {       
-        private readonly BALLogin _balLogin;
-        ResponseResult result = new ResponseResult();
-        public LoginController(BALLogin balLogin)
-        {           
-            _balLogin = balLogin;
+    public class LoginController : Controller
+    {
+        private IConfiguration _config;
+
+        public LoginController(IConfiguration config)
+        {
+            _config = config;
         }
 
+        [AllowAnonymous]
         [HttpPost]
-        [Route("LoginUser")]
-        public ResponseResult LoginUser(LoginRequest loginRequest)
+        public IActionResult Login([FromBody] UserLogin userLogin)
         {
-            try
-            {                                
-                result.Data = _balLogin.LoginUser(loginRequest);
-                result.Result = ResponseStatus.Success;
-            }
-            catch (Exception ex)
+            var user = Authenticate(userLogin);
+
+            if (user != null)
             {
-                result.Result = ResponseStatus.Error;
-                result.Message = ex.Message;
+                var token = Generate(user);
+                return Ok("Welcome: " + user.GivenName + "Your JWT Token: " + token);
+                //return Ok("Welcome: " + user.GivenName);
             }
-            return result;
+
+            return NotFound("User not found");
         }
 
-        [HttpPost]
-        [Route("Register")]
-        public ResponseResult RegisterUser(User user)
+        private string Generate(UserInfo user)
         {
-            try
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
             {
-                result.Data = _balLogin.Register(user);
-                result.Result = ResponseStatus.Success;
-            }
-            catch (Exception ex)
-            {
-                result.Result = ResponseStatus.Error;
-                result.Message = ex.Message;
-            }
-            return result;
+                 new Claim(ClaimTypes.NameIdentifier, user.Username),
+                 new Claim(ClaimTypes.Email, user.EmailAddress),
+                 new Claim(ClaimTypes.GivenName, user.GivenName),
+                 new Claim(ClaimTypes.Surname, user.Surname),
+                 new Claim(ClaimTypes.Role, user.Role)
+            };
+
+            var token = new JwtSecurityToken(_config["Jwt:Issuer"],
+              _config["Jwt:Audience"],
+              claims,
+              expires: DateTime.Now.AddMinutes(15),
+              signingCredentials: credentials);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        [HttpGet]
-        [Route("GetUserById/{id}")]
-        [Authorize]
-        public ResponseResult GetUserById(int id)
+        private UserInfo Authenticate(UserLogin userLogin)
         {
-            try
-            {
-                result.Data = _balLogin.GetUserById(id);
-                result.Result = ResponseStatus.Success;
-            }
-            catch (Exception ex)
-            {
-                result.Result = ResponseStatus.Error;
-                result.Message = ex.Message;
-            }
-            return result;
-        }
+            var currentUser = DALStatics.Users.FirstOrDefault(o => o.Username.ToLower() == userLogin.Username.ToLower() && o.Password == userLogin.Password);
 
-        [HttpPost]
-        [Route("UpdateUser")]
-        [Authorize]
-        public ResponseResult UpdateUser(User user)
-        {
-            try
+            if (currentUser != null)
             {
-                result.Data = _balLogin.UpdateUser(user);
-                result.Result = ResponseStatus.Success;
+                return currentUser;
             }
-            catch (Exception ex)
-            {
-                result.Result = ResponseStatus.Error;
-                result.Message = ex.Message;
-            }
-            return result;
+
+            return null;
         }
     }
 }
