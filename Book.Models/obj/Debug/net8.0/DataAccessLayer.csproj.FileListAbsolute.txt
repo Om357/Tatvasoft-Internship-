@@ -1,0 +1,14 @@
+C:\Users\Om357\source\repos\Books\Book.Models\obj\Debug\net8.0\DataAccessLayer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Om357\source\repos\Books\Book.Models\obj\Debug\net8.0\DataAccessLayer.AssemblyInfoInputs.cache
+C:\Users\Om357\source\repos\Books\Book.Models\obj\Debug\net8.0\DataAccessLayer.AssemblyInfo.cs
+C:\Users\Om357\source\repos\Books\Book.Models\obj\Debug\net8.0\DataAccessLayer.csproj.CoreCompileInputs.cache
+C:\Users\Om357\source\repos\Books\Book.Models\bin\Debug\net8.0\DataAccessLayer.deps.json
+C:\Users\Om357\source\repos\Books\Book.Models\bin\Debug\net8.0\DataAccessLayer.runtimeconfig.json
+C:\Users\Om357\source\repos\Books\Book.Models\bin\Debug\net8.0\DataAccessLayer.dll
+C:\Users\Om357\source\repos\Books\Book.Models\bin\Debug\net8.0\DataAccessLayer.pdb
+C:\Users\Om357\source\repos\Books\Book.Models\obj\Debug\net8.0\DataAccessLayer.csproj.AssemblyReference.cache
+C:\Users\Om357\source\repos\Books\Book.Models\obj\Debug\net8.0\DataAccessLayer.dll
+C:\Users\Om357\source\repos\Books\Book.Models\obj\Debug\net8.0\refint\DataAccessLayer.dll
+C:\Users\Om357\source\repos\Books\Book.Models\obj\Debug\net8.0\DataAccessLayer.pdb
+C:\Users\Om357\source\repos\Books\Book.Models\obj\Debug\net8.0\DataAccessLayer.genruntimeconfig.cache
+C:\Users\Om357\source\repos\Books\Book.Models\obj\Debug\net8.0\ref\DataAccessLayer.dll
